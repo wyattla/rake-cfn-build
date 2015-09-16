@@ -24,7 +24,7 @@ namespace :cfn do
 
     # Variables
     $stack_name = $project_name + '-' + $application_name
-    $cfn_templates = Dir.glob(File.join($cfn_path,'*rb'))
+    $cfn_templates = Dir.glob(File.join($cfn_path,'*rb')).map {|x| File.expand_path x }
     $cfn_stack_name = $environment + '-' + $stack_name
 
     # Validations
@@ -46,7 +46,7 @@ namespace :cfn do
         cmd = "bundle exec #{template} expand > tmp/#{template_json_name}"
         pid, stdin, stdout, stderr = Open4::popen4 cmd
         ignored, status = Process::waitpid2 pid
-        raise "Error creating json template on #{template}" if status.exitstatus != 0
+        raise "Error creating json template on #{template} \n#{stderr.read}" if status.exitstatus != 0
 
         # Upload json template to s3
         obj = s3.bucket($bucket_name).object(template_key)
