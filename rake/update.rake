@@ -11,7 +11,6 @@ namespace :cfn do
       pid, stdin, stdout, stderr = Open4::popen4 cmd
       ignored, status = Process::waitpid2 pid
 
-
       # Exit if command failed
       raise "Error executing #{cmd}: #{stderr.read}" if status.exitstatus != 0
       puts "INFO - Template update triggered for #{$cfn_stack_name}"
@@ -43,7 +42,7 @@ namespace :cfn do
         ignored, status = Process::waitpid2 pid
 
         # Check the status and raise if not CREATE_COMPLETE
-        stack_status = JSON::parse(stdout.read)['dev-edge-eescdb']['stack_status']
+        stack_status = JSON::parse(stdout.read)[$cfn_stack_name]['stack_status']
         raise stack_status if ['UPDATE_FAILED','UPDATE_ROLLBACK_COMPLETE'].include? stack_status
 
       end until stack_status == "UPDATE_COMPLETE"
