@@ -1,0 +1,4 @@
+envvars
+*.sw?
+vendor
+tmp
