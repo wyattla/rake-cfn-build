@@ -13,7 +13,7 @@ namespace :cfn do
     # AWS Credentials validation
     ENV['AWS_ACCESS_KEY_ID'] || raise('error: AWS_ACCESS_KEY_ID not defined')
     ENV['AWS_SECRET_ACCESS_KEY'] || raise('error: AWS_SECRET_ACCESS_KEY not defined')
-    ENV['AWS_REGION'] || raise('error: AWS_REGION not defined')
+    ENV['AWS_DEFAULT_REGION'] || raise('error: AWS_DEFAULT_REGION not defined')
 
     # Env variables definition:
     $bucket_name = ENV['CFN_BUCKETNAME'] || raise('error: CFN_BUCKETNAME not defined')
