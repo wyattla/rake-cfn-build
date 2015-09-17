@@ -14,6 +14,7 @@ namespace :cfn do
     rescue => e
       puts "ERROR - failed to delete the stack, error was:"
       puts e
+      exit 1
     end
 
   end
