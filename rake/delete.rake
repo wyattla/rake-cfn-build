@@ -4,7 +4,7 @@ namespace :cfn do
   task :delete => :init do
 
     # Mandatory variables
-    $cfn_path = ENV['CFN_TEMPLATE_PATH'] || raise('error: no CFN_ENVIRONMENT not defined')
+    $cfn_path = ENV['CFN_TEMPLATE_PATH'] || raise('error: no CFN_TEMPLATE_PATH not defined')
     $cfn_stack_name = ENV['CFN_STACK_NAME']
 
     # Build cfn_stack_name if not defined through CFN_STACK_NAME
