@@ -1,24 +1,18 @@
 namespace :cfn do
 
-  desc "Create a new environment using cloud formation"
+  desc "Delete a stack using cloud formation template"
   task :delete => :init do
 
-    # Mandatory variables
+    # Env variables definition:
     $cfn_path = ENV['CFN_TEMPLATE_PATH'] || raise('error: no CFN_TEMPLATE_PATH not defined')
-    $cfn_stack_name = ENV['CFN_STACK_NAME']
+    $bucket_name = ENV['CFN_BUCKETNAME'] || raise('error: CFN_BUCKETNAME not defined')
+    $application_name = ENV['CFN_APPLICATIONNAME'] || raise('error: CFN_APPLICATIONNAME not defined')
+    $project_name = ENV['CFN_PROJECTNAME'] || raise('error: CFN_PROJECTNAME not defined')
+    $environment = ENV['CFN_ENVIRONMENT'] || raise('error: no CFN_ENVIRONMENT not defined')
 
-    # Build cfn_stack_name if not defined through CFN_STACK_NAME
-    if $cfn_stack_name.nil?
-      # Env variables definition:
-      $bucket_name = ENV['CFN_BUCKETNAME'] || raise('error: CFN_BUCKETNAME not defined')
-      $application_name = ENV['CFN_APPLICATIONNAME'] || raise('error: CFN_APPLICATIONNAME not defined')
-      $project_name = ENV['CFN_PROJECTNAME'] || raise('error: CFN_PROJECTNAME not defined')
-      $environment = ENV['CFN_ENVIRONMENT'] || raise('error: no CFN_ENVIRONMENT not defined')
-
-      # Variables
-      $stack_name = $project_name + '-' + $application_name
-      $cfn_stack_name = $environment + '-' + $stack_name
-    end
+    # Variables
+    $stack_name = $project_name + '-' + $application_name
+    $cfn_stack_name = $environment + '-' + $stack_name
 
     # Execute the main template
     begin
