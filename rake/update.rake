@@ -5,7 +5,20 @@ namespace :cfn do
 
     
     # Verify if the stack exist, if not and requested, then trigger the create of it
-    if $cfn_create_if_not_exist
+
+    begin
+      cfn = Aws::CloudFormation::Client.new
+      stack = cfn.describe_stacks(stack_name: $cfn_stack_name,)
+    rescue => e
+      if e.message.match(/Stack with id .* does not exist/)
+        stack = nil 
+      else
+        puts "ERROR - failed to get a list of stacks, error was:"
+        puts e
+      end
+    end
+
+    if $cfn_create_if_not_exist && stack.nil?
       puts "WARN - Environment does not exist, creating"
       Rake::Task["cfn:create"].invoke 
       exit 0
