@@ -1,7 +1,7 @@
 namespace :cfn do
 
   desc "Create"
-  task :create => :init do
+  task :create => :upload do
 
     # Execute the main template
     begin

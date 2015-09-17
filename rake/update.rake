@@ -1,11 +1,9 @@
 namespace :cfn do
 
   desc "update"
-  task :update => :init do
+  task :update => :upload do
 
-    
     # Verify if the stack exist, if not and requested, then trigger the create of it
-
     begin
       cfn = Aws::CloudFormation::Client.new
       stack = cfn.describe_stacks(stack_name: $cfn_stack_name,)

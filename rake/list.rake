@@ -1,7 +1,7 @@
 namespace :cfn do
 
   desc "List all the CFN stacks"
-  task :list do
+  task :list => :init do
 
     begin
 
