@@ -3,6 +3,12 @@ namespace :cfn do
   desc "Validate"
   task :validate => :init do
 
+    # Env variables definition:
+    $cfn_path = ENV['CFN_TEMPLATE_PATH'] || raise('error: no CFN_ENVIRONMENT not defined')
+
+    # Variables
+    $cfn_templates = Dir.glob(File.join($cfn_path,'*rb')).map {|x| File.expand_path x }
+
     # Execute the main template
     begin
 
