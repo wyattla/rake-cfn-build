@@ -21,6 +21,7 @@ namespace :cfn do
     $project_name = ENV['CFN_PROJECTNAME'] || raise('error: CFN_PROJECTNAME not defined')
     $environment = ENV['CFN_ENVIRONMENT'] || raise('error: no CFN_ENVIRONMENT not defined')
     $cfn_path = ENV['CFN_TEMPLATE_PATH'] || raise('error: no CFN_ENVIRONMENT not defined')
+    $cfn_create_if_not_exist = ENV['CFN_CREATE_IF_NOT_EXIST'].nil? ? false : ENV['CFN_CREATE_IF_NOT_EXIST']
 
     # Variables
     $stack_name = $project_name + '-' + $application_name
@@ -65,4 +66,3 @@ namespace :cfn do
   end
 
 end
-

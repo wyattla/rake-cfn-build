@@ -3,6 +3,14 @@ namespace :cfn do
   desc "update"
   task :update => :init do
 
+    
+    # Verify if the stack exist, if not and requested, then trigger the create of it
+    if $cfn_create_if_not_exist
+      puts "WARN - Environment does not exist, creating"
+      Rake::Task["cfn:create"].invoke 
+      exit 0
+    end
+
     # Execute the main template
     begin
 
