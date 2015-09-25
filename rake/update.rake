@@ -26,7 +26,7 @@ namespace :cfn do
     begin
 
       # Update the stack
-      cmd = "bundle exec #{File.join($cfn_path,'main.rb')} update #{$cfn_stack_name}"
+      cmd = "bundle exec #{File.join($cfn_template_path,'main.rb')} update #{$cfn_stack_name}"
       pid, stdin, stdout, stderr = Open4::popen4 cmd
       ignored, status = Process::waitpid2 pid
 
@@ -56,7 +56,7 @@ namespace :cfn do
         sleep AWS_SLEEP_TIME
 
         # Get the cfn stack status
-        cmd = "bundle exec #{File.join($cfn_path,'main.rb')} describe #{$cfn_stack_name}"
+        cmd = "bundle exec #{File.join($cfn_template_path,'main.rb')} describe #{$cfn_stack_name}"
         pid, stdin, stdout, stderr = Open4::popen4 cmd
         ignored, status = Process::waitpid2 pid
 

@@ -12,6 +12,8 @@ namespace :cfn do
     $cfn_create_if_not_exist = ENV['EV_CREATE_IF_NOT_EXIST'].nil? ? false : ENV['EV_CREATE_IF_NOT_EXIST']
 
     # Variables
+    $cfn_stack_name = "#{$environment}-#{$project_name}-#{$application_name}"
+
     $cfn_template_path = File.join($application_path,'cloudformation')
     $cfn_templates = Dir.glob(File.join($cfn_template_path,'*rb')).map {|x| File.expand_path x }
 
@@ -71,6 +73,8 @@ namespace :cfn do
 
         # Create tarfile:
         files = [
+          "ansible.cfg",
+          "playbooks/shared_vars",
           "playbooks/common.yml",
           "playbooks/#{role}.yml",
           "roles"
