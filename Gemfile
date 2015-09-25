@@ -2,10 +2,16 @@ source 'https://rubygems.org'
 
 ruby '2.1.2'
 
-
 gem 'cloudformation-ruby-dsl'
 gem 'aws-sdk'
 gem 'rake'
-gem 'pry'
 gem 'open4'
-gem 'rspec'
+
+group :development do
+  gem 'pry'
+end
+
+group :test do
+  gem 'cucumber'
+  gem 'aruba'
+end

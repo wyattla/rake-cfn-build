@@ -4,13 +4,15 @@ namespace :cfn do
   task :delete => :init do
 
     # Env variables definition:
-    $cfn_path = ENV['CFN_TEMPLATE_PATH'] || raise('error: no CFN_TEMPLATE_PATH not defined')
-    $bucket_name = ENV['CFN_BUCKETNAME'] || raise('error: CFN_BUCKETNAME not defined')
-    $application_name = ENV['CFN_APPLICATIONNAME'] || raise('error: CFN_APPLICATIONNAME not defined')
-    $project_name = ENV['CFN_PROJECTNAME'] || raise('error: CFN_PROJECTNAME not defined')
-    $environment = ENV['CFN_ENVIRONMENT'] || raise('error: no CFN_ENVIRONMENT not defined')
+    $bucket_name = ENV['EV_BUCKET_NAME'] || raise('error: EV_BUCKET_NAME not defined')
+    $application_name = ENV['EV_APPLICATION_NAME'] || raise('error: EV_APPLICATION_NAME not defined')
+    $project_name = ENV['EV_PROJECT_NAME'] || raise('error: EV_PROJECT_NAME not defined')
+    $environment = ENV['EV_ENVIRONMENT'] || raise('error: no EV_ENVIRONMENT not defined')
+    $application_path = ENV['EV_GIT_PATH'] || raise('error: no EV_GIT_PATH not defined')
+    $cfn_create_if_not_exist = ENV['EV_CREATE_IF_NOT_EXIST'].nil? ? false : ENV['EV_CREATE_IF_NOT_EXIST']
 
     # Variables
+    $cfn_templates = Dir.glob(File.join('cloudformation',$application_path,'*rb')).map {|x| File.expand_path x }
     $stack_name = $project_name + '-' + $application_name
     $cfn_stack_name = $environment + '-' + $stack_name
 
@@ -18,7 +20,7 @@ namespace :cfn do
     begin
 
       # Delete stack
-      cmd = "bundle exec #{File.join($cfn_path,'main.rb')} delete #{$cfn_stack_name}"
+      cmd = "bundle exec #{File.join($cfn_templates,'main.rb')} delete #{$cfn_stack_name}"
       pid, stdin, stdout, stderr = Open4::popen4 cmd
       stdin.puts "y" 
       ignored, status = Process::waitpid2 pid
