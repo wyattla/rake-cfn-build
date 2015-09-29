@@ -1,14 +1,12 @@
 namespace :cfn do
-
-  desc "Upload templates to s3"
-  task :upload => :init do
-
+  desc 'Upload templates to s3'
+  task upload: :init do
     # Env variables definition:
-    $bucket_name = ENV['EV_BUCKET_NAME'] || raise('error: EV_BUCKET_NAME not defined')
-    $application_name = ENV['EV_APPLICATION_NAME'] || raise('error: EV_APPLICATION_NAME not defined')
-    $project_name = ENV['EV_PROJECT_NAME'] || raise('error: EV_PROJECT_NAME not defined')
-    $environment = ENV['EV_ENVIRONMENT'] || raise('error: no EV_ENVIRONMENT not defined')
-    $application_path = ENV['EV_GIT_PATH'] || raise('error: no EV_GIT_PATH not defined')
+    $bucket_name = ENV['EV_BUCKET_NAME'] || fail('error: EV_BUCKET_NAME not defined')
+    $application_name = ENV['EV_APPLICATION_NAME'] || fail('error: EV_APPLICATION_NAME not defined')
+    $project_name = ENV['EV_PROJECT_NAME'] || fail('error: EV_PROJECT_NAME not defined')
+    $environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
+    $application_path = ENV['EV_GIT_PATH'] || fail('error: no EV_GIT_PATH not defined')
     $cfn_create_if_not_exist = ENV['EV_CREATE_IF_NOT_EXIST'].nil? ? false : ENV['EV_CREATE_IF_NOT_EXIST']
 
     # Variables
@@ -44,7 +42,7 @@ namespace :cfn do
         cmd = "bundle exec #{file} expand > tmp/#{template_cfn_name}"
         pid, stdin, stdout, stderr = Open4::popen4 cmd
         ignored, status = Process::waitpid2 pid
-        raise "Error creating json template on #{file} \n#{stderr.read}" if status.exitstatus != 0
+        fail "Error creating json template on #{file} \n#{stderr.read}" if status.exitstatus != 0
 
         # Upload json template to s3
         obj = s3.bucket($bucket_name).object(template_key)
