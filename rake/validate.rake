@@ -7,17 +7,17 @@ namespace :cfn do
     $application_path = ENV['EV_GIT_PATH'] || raise('error: no EV_GIT_PATH not defined')
 
     # Variables
-    $cfn_templates = Dir.glob(File.join($application_path,'cloudformation','*rb')).map {|x| File.expand_path x }
-
+    $rubycfndsl_files = Dir.glob(File.join($application_path,'cloudformation','*rb')).map {|x| File.expand_path x }
+    
     # Execute the main template
     begin
 
       puts "INFO - Validating cfn templates
       "
-      $cfn_templates.each do |template|
+      $rubycfndsl_files.each do |file|
 
         # Validate the stack
-        cmd = "bundle exec #{template} validate"
+        cmd = "bundle exec #{file} validate"
         pid, stdin, stdout, stderr = Open4::popen4 cmd
         ignored, status = Process::waitpid2 pid
 
@@ -25,7 +25,7 @@ namespace :cfn do
         raise "Error executing #{cmd}:\n #{stderr.read}" if status.exitstatus != 0
 
         # Return status:
-        puts File.basename(template) + " " + stdout.read
+        puts File.basename(file) + " " + stdout.read
       end
 
     rescue => e
