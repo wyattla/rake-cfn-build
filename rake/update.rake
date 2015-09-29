@@ -14,12 +14,14 @@ namespace :cfn do
 
     create_if_not_exist = ENV['EV_CREATE_IF_NOT_EXIST'].nil? ? false : ENV['EV_CREATE_IF_NOT_EXIST']
 
+    git_path = ENV['EV_GIT_PATH'] || fail('ERROR: no EV_GIT_PATH not defined')
+
     ######################################################################
     # Variables definitions and validations
 
     cfn_stack_name = "#{environment}-#{project_name}-#{application_name}"
 
-    rubycfndsl_path = File.join(application_path, 'rubycfndsl')
+    rubycfndsl_path = File.join(git_path, 'rubycfndsl')
 
     ######################################################################
     # Verify if the stack exist, if not and requested, then trigger the create of it

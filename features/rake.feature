@@ -19,6 +19,11 @@ Feature: Run rake tasks
     Then the output should not contain "ERROR"
     And the exit status should be 0
 
+  Scenario: Update a new environment
+    When I run `rake cfn:update`
+    Then the output should not contain "ERROR"
+    And the exit status should be 0
+
   Scenario: Delete the environment
     When I run `rake cfn:delete`
     Then the output should not contain "ERROR"
