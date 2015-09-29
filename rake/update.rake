@@ -1,24 +1,44 @@
 namespace :cfn do
 
-  desc "update"
+  desc 'Update an existing stack'
   task :update => :upload do
 
+    ######################################################################
+    # Environment variables / task parameters
+
+    application_name = ENV['EV_APPLICATION_NAME'] || fail('error: EV_APPLICATION_NAME not defined')
+
+    project_name = ENV['EV_PROJECT_NAME'] || fail('error: EV_PROJECT_NAME not defined')
+
+    environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
+
+    create_if_not_exist = ENV['EV_CREATE_IF_NOT_EXIST'].nil? ? false : ENV['EV_CREATE_IF_NOT_EXIST']
+
+    ######################################################################
+    # Variables definitions and validations
+
+    cfn_stack_name = "#{environment}-#{project_name}-#{application_name}"
+
+    rubycfndsl_path = File.join(application_path, 'rubycfndsl')
+
+    ######################################################################
     # Verify if the stack exist, if not and requested, then trigger the create of it
+
     begin
       cfn = Aws::CloudFormation::Client.new
-      stack = cfn.describe_stacks(stack_name: $cfn_stack_name,)
+      stack = cfn.describe_stacks(stack_name: cfn_stack_name)
     rescue => e
       if e.message.match(/Stack with id .* does not exist/)
-        stack = nil 
+        stack = nil
       else
-        puts "ERROR - failed to get a list of stacks, error was:"
+        puts 'ERROR: failed to get a list of stacks, error was:'
         puts e
       end
     end
 
-    if $cfn_create_if_not_exist && stack.nil?
-      puts "WARN - Environment does not exist, creating"
-      Rake::Task["cfn:create"].invoke 
+    if create_if_not_exist && stack.nil?
+      puts 'WARN: Environment does not exist, creating'
+      Rake::Task['cfn:create'].invoke
       exit 0
     end
 
@@ -26,49 +46,50 @@ namespace :cfn do
     begin
 
       # Update the stack
-      cmd = "bundle exec #{File.join($cfn_template_path,'main.rb')} update #{$cfn_stack_name}"
-      pid, stdin, stdout, stderr = Open4::popen4 cmd
-      ignored, status = Process::waitpid2 pid
+      cmd = "bundle exec #{File.join(rubycfndsl_path, 'main.rb')} update #{cfn_stack_name}"
+      pid, _stdin, _stdout, stderr = Open4.popen4 cmd
+      _ignored, status = Process.waitpid2 pid
 
       # Exit if command failed
-      raise "Error executing #{cmd}: #{stderr.read}" if status.exitstatus != 0
-      puts "INFO - Template update triggered for #{$cfn_stack_name}"
+      fail "Error executing #{cmd}: #{stderr.read}" if status.exitstatus != 0
+      puts "INFO: Template update triggered for #{cfn_stack_name}"
 
     rescue => e
 
       # Case where the environment is up to date
       if e.message.match(/No updates are to be performed/)
-        puts "WARN - No updates are to be performed, stack is up to date"
+        puts 'WARN: No updates are to be performed, stack is up to date'
         exit 0
       end
 
-      puts "ERROR - failed to update template, error was:"
+      puts 'ERROR: failed to update template, error was:'
       puts e
       exit 1
     end
-    
+
     # Validate the status and exit accordingly
     begin
 
-      begin
+      loop do
 
         # Sanity sleep to not overflow the AWS API
         sleep AWS_SLEEP_TIME
 
         # Get the cfn stack status
-        cmd = "bundle exec #{File.join($cfn_template_path,'main.rb')} describe #{$cfn_stack_name}"
-        pid, stdin, stdout, stderr = Open4::popen4 cmd
-        ignored, status = Process::waitpid2 pid
+        cmd = "bundle exec #{File.join(rubycfndsl_path, 'main.rb')} describe #{cfn_stack_name}"
+        pid, _stdin, stdout, stderr = Open4.popen4 cmd
+        _ignored, status = Process.waitpid2 pid
 
-        # Check the status and raise if not CREATE_COMPLETE
-        stack_status = JSON::parse(stdout.read)[$cfn_stack_name]['stack_status']
-        raise stack_status if ['UPDATE_FAILED','UPDATE_ROLLBACK_COMPLETE'].include? stack_status
+        # Check the status and fail if not CREATE_COMPLETE
+        stack_status = JSON.parse(stdout.read)[cfn_stack_name]['stack_status']
+        fail stack_status if %w(UPDATE_FAILED UPDATE_ROLLBACK_COMPLETE).include? stack_status
 
-      end until stack_status == "UPDATE_COMPLETE"
+        break if stack_status == 'UPDATE_COMPLETE'
+      end
 
-      puts "INFO - Template update successfull"
+      puts 'INFO: Template update successfull'
     rescue => e
-      puts "ERROR - failed to update template, error was:"
+      puts 'ERROR: failed to update template, error was:'
       puts e
       exit 1
     end
@@ -76,4 +97,3 @@ namespace :cfn do
   end
 
 end
-

@@ -1,6 +1,6 @@
 namespace :cfn do
 
-  desc "Initialize"
+  desc 'Initialize'
   task :init do
 
     # Tmp directory
@@ -11,9 +11,9 @@ namespace :cfn do
     AWS_SLEEP_TIME = 2
 
     # AWS Credentials validation
-    ENV['AWS_ACCESS_KEY_ID'] || raise('error: AWS_ACCESS_KEY_ID not defined')
-    ENV['AWS_SECRET_ACCESS_KEY'] || raise('error: AWS_SECRET_ACCESS_KEY not defined')
-    ENV['AWS_DEFAULT_REGION'] || raise('error: AWS_DEFAULT_REGION not defined')
+    ENV['AWS_ACCESS_KEY_ID'] || fail('ERROR: AWS_ACCESS_KEY_ID not defined')
+    ENV['AWS_SECRET_ACCESS_KEY'] || fail('ERROR: AWS_SECRET_ACCESS_KEY not defined')
+    ENV['AWS_DEFAULT_REGION'] || fail('ERROR: AWS_DEFAULT_REGION not defined')
 
   end
 
