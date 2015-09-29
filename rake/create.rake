@@ -12,12 +12,14 @@ namespace :cfn do
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
 
+    git_path = ENV['EV_GIT_PATH'] || fail('error: no EV_GIT_PATH not defined')
+
     ######################################################################
     # Variables definitions and validations
 
     cfn_stack_name = "#{environment}-#{project_name}-#{application_name}"
 
-    rubycfndsl_path = File.join(application_path, 'rubycfndsl')
+    rubycfndsl_path = File.expand_path File.join(git_path, 'rubycfndsl')
 
     ######################################################################
     # Execute the main template
@@ -46,7 +48,7 @@ namespace :cfn do
         sleep AWS_SLEEP_TIME
 
         # Get the cfn stack status
-        cmd = "bundle exec #{File.join(cfn_template_path, 'main.rb')} describe #{cfn_stack_name}"
+        cmd = "bundle exec #{File.join(rubycfndsl_path, 'main.rb')} describe #{cfn_stack_name}"
         pid, _stdin, stdout, _stderr = Open4.popen4 cmd
         _ignored, _status = Process.waitpid2 pid
 

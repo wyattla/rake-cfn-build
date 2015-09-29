@@ -12,12 +12,14 @@ namespace :cfn do
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
 
+    git_path = ENV['EV_GIT_PATH'] || fail('error: no EV_GIT_PATH not defined')
+
     ######################################################################
     # Variables definitions and validations
 
     cfn_stack_name = "#{environment}-#{project_name}-#{application_name}"
 
-    rubycfndsl_path = File.join(application_path, 'rubycfndsl')
+    rubycfndsl_path = File.join(git_path, 'rubycfndsl')
 
     ######################################################################
     # Delete the stack
@@ -30,7 +32,7 @@ namespace :cfn do
       _ignored, status = Process.waitpid2 pid
 
       # Exit if command failed
-      fail "Error executing #{cmd}: #{stderr.read}" if status.exitstatus != 0
+      fail "ERROR: failed to executing #{cmd}: \n\n #{stderr.read}" if status.exitstatus != 0
       puts "INFO: Template delete triggered for #{cfn_stack_name}"
 
     rescue => e

@@ -4,7 +4,7 @@ namespace :cfn do
   task :delete_stack => :init do
 
     # Mandatory variables
-    cfn_stack_name = ENV['CFN_STACK_NAME']
+    cfn_stack_name = ENV['EV_CFN_STACK_NAME']
 
     # Get the stack, and delete it
     begin

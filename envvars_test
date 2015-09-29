@@ -1,0 +1,13 @@
+# Environment variables for ASA-CDTAPI
+export EV_BUCKET_NAME=els-evise-nonprod-rake-cfn-build
+export EV_APPLICATION_NAME=testapp
+export EV_PROJECT_NAME=testproj
+export EV_ENVIRONMENT=test
+export EV_GIT_PATH=resources/test_app
+export EV_CREATE_IF_NOT_EXIST=true
+export EV_CFN_STACK_NAME=test-testproj-testapp
+
+# Credentials
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_DEFAULT_REGION=eu-west-1

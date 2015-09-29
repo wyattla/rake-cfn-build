@@ -13,19 +13,19 @@ namespace :cfn do
 
     environment = ENV['EV_ENVIRONMENT'] || fail('ERROR: no EV_ENVIRONMENT not defined')
 
-    application_path = ENV['EV_GIT_PATH'] || fail('ERROR: no EV_GIT_PATH not defined')
+    git_path = ENV['EV_GIT_PATH'] || fail('ERROR: no EV_GIT_PATH not defined')
 
     ######################################################################
     # Variables definitions and validations
 
-    rubycfndsl_path = File.join(application_path, 'rubycfndsl')
+    rubycfndsl_path = File.join(git_path, 'rubycfndsl')
     rubycfndsl_files = Dir.glob(File.join(rubycfndsl_path, '*rb')).map do |x|
       File.expand_path x
     end
 
     fail "ERROR: No templates found on #{rubycfndsl_path}" if rubycfndsl_files.empty?
 
-    ansible_path = File.join(application_path, 'ansible')
+    ansible_path = File.join(git_path, 'ansible')
     ansible_playbooks_raw = Dir.glob(File.join(ansible_path, 'playbooks', '*yml'))
     ansible_playbooks = ansible_playbooks_raw.map do |x|
       File.expand_path x unless x.match(/common/)
@@ -77,7 +77,12 @@ namespace :cfn do
         files = ['ansible.cfg', 'playbooks/shared_vars', 'playbooks/common.yml',
                  "playbooks/#{role}.yml", 'roles']
 
-        system "cd #{ansible_path} && tar zcf #{tarfile} #{files.join(' ')}"
+        cmd = "cd #{ansible_path} && tar zcf #{tarfile} #{files.join(' ')}"
+        pid, _stdin, _stdout, stderr = Open4.popen4 cmd
+        _ignored, status = Process.waitpid2 pid
+        if status.exitstatus != 0
+          fail "ERROR: Failed to create tar file #{tarfile} \n#{stderr.read}"
+        end
 
         # Upload tarfile to s3
         tarfile_key = File.join(project_name, application_name,

@@ -1,0 +1,8 @@
+- name: Create OS Users
+  hosts: localhost
+  vars_files:
+    - shared_vars/users/main.yml
+    - shared_vars/sudo/main.yml
+  roles:
+    - {role: mivok0.users, tags: users}
+    - {role: franklinkim.sudo, tags: sudo}
