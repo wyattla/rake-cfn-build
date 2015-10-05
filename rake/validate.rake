@@ -14,7 +14,7 @@ namespace :cfn do
     rubycfndsl_path = File.join(application_path, 'rubycfndsl')
     rubycfndsl_files = Dir.glob(File.join(rubycfndsl_path, '*rb')).map do |x|
       File.expand_path x
-    end
+    end.sort
 
     fail "ERROR: No templates found on #{rubycfndsl_path}" if rubycfndsl_files.empty?
 
@@ -37,6 +37,8 @@ namespace :cfn do
         # Return status:
         puts "#{File.basename(file)} #{stdout.read}"
       end
+
+      puts ""
 
     rescue => e
       puts 'ERROR: failed to create template, error was:'

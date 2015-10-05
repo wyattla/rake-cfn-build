@@ -57,9 +57,9 @@ namespace :cfn do
         obj.upload_file(File.join('tmp', template_cfn_name))
       end
 
-      puts "INFO: Cloud formation templates uploaded to \
-            s3://#{File.join(bucket_name, project_name, application_name,
-                             environment, 'cloudformation')}"
+      s3_cfn_location = File.join(bucket_name, project_name, application_name,
+                                  environment, 'cloudformation')
+      puts "INFO: Cloud formation templates uploaded to s3://#{s3_cfn_location}"
 
     rescue => e
       puts 'ERROR: failed to upload templates to s3, error was:'
@@ -77,6 +77,7 @@ namespace :cfn do
         files = ['ansible.cfg', 'playbooks/shared_vars', 'playbooks/common.yml',
                  "playbooks/#{role}.yml", 'roles']
 
+        # Create the taarball file
         cmd = "cd #{ansible_path} && tar zcf #{tarfile} #{files.join(' ')}"
         pid, _stdin, _stdout, stderr = Open4.popen4 cmd
         _ignored, status = Process.waitpid2 pid
@@ -85,17 +86,22 @@ namespace :cfn do
         end
 
         # Upload tarfile to s3
-        tarfile_key = File.join(project_name, application_name,
-                                environment, 'ansible', tarfile)
-
-        # Upload each tarball to s3
+        tarfile_key = File.join(project_name, application_name, environment,
+                                'ansible', tarfile)
         obj = s3.bucket(bucket_name).object(tarfile_key)
         obj.upload_file(File.join(ansible_path, tarfile))
+
+        # Upload the version file to s3
+        git_hash = `cd #{ansible_path} && git rev-parse HEAD`
+        version_key = File.join(project_name, application_name, environment,
+                                'ansible', 'version')
+        obj = s3.bucket(bucket_name).object(version_key)
+        obj.put(body: git_hash)
       end
 
-      puts "INFO: Ansible playbooks uploaded to \
-            s3://#{File.join(bucket_name, project_name, application_name,
-                             environment, 'ansible')}"
+      s3_ansible_location = File.join(bucket_name, project_name, application_name,
+                                      environment, 'ansible')
+      puts "INFO: Ansible playbooks uploaded to s3://#{s3_ansible_location}"
 
     rescue => e
       puts 'ERROR: failed to upload ansible tarfile to s3, error was:'

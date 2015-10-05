@@ -23,6 +23,7 @@ namespace :cfn do
 
     ######################################################################
     # Delete the stack
+
     begin
 
       # Delete stack
@@ -41,6 +42,30 @@ namespace :cfn do
       exit 1
     end
 
+    ######################################################################
+    # Wait until stack is deleted
+
+    begin
+      cfn = Aws::CloudFormation::Client.new
+
+      loop do
+
+        # Sanity sleep to not overflow the AWS API
+        sleep AWS_SLEEP_TIME
+
+        # Get the list of stacks and ask for status
+        response = cfn.describe_stacks(stack_name: cfn_stack_name)
+        break if response.stacks.size == 0
+        fail 'DELETE_FAILED' if %w(DELETE_FAILED).include? response.stacks.first.stack_status
+
+      end
+    rescue => e
+      unless e.message.match(/Stack with id .* does not exist/)
+        puts 'ERROR: failed to get a list of stacks, error was:'
+        puts e
+      end
+    end
+    puts 'INFO: Stack has been deleted'
   end
 
 end
