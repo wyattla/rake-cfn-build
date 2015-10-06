@@ -6,3 +6,4 @@ tmp
 bin/
 .bundle/
 .gems/
+.idea/
