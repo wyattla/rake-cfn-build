@@ -11,7 +11,6 @@ require 'cloudformation-ruby-dsl/table'
 $environment = ENV['EV_ENVIRONMENT'] || raise('error: no EV_ENVIRONMENT provided')
 $projectname = ENV['EV_PROJECT_NAME'] || raise('error: no EV_PROJECT_NAME provided')
 $bucketname = ENV['EV_BUCKET_NAME'] || raise('error: no EV_BUCKET_NAME provided')
-$applicationname = ENV['EV_APPLICATION_NAME'] || raise('error: no EV_APPLICATION_NAME provided')
 
 template do
 
@@ -58,15 +57,6 @@ template do
     :MinLength => '1',
     :MaxLength => '64',
     :AllowedPattern => '[a-zA-Z0-9-\.]*',
-    :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
-
-  parameter 'ApplicationName',
-    :Default => $applicationname,
-    :Description => 'The application Name',
-    :Type => 'String',
-    :MinLength => '1',
-    :MaxLength => '64',
-    :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
     :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
 
   ####################################################################################################

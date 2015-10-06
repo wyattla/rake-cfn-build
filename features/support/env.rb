@@ -14,7 +14,6 @@ and complete with the account credentials
 
   # Test project specific variables
   export EV_BUCKET_NAME=els-evise-nonprod-rake-cfn-build
-  export EV_APPLICATION_NAME=testapp
   export EV_PROJECT_NAME=testproj
   export EV_ENVIRONMENT=test
   export EV_GIT_PATH=resources/test_app
@@ -34,7 +33,7 @@ end
 
 # Show help message if environment variables are not defined
 %w(AWS_ACCESS_KEY_ID AWS_DEFAULT_REGION AWS_REGION AWS_SECRET_ACCESS_KEY
-EV_APPLICATION_NAME EV_BUCKET_NAME EV_CFN_STACK_NAME EV_CREATE_IF_NOT_EXIST 
+ EV_BUCKET_NAME EV_CFN_STACK_NAME EV_CREATE_IF_NOT_EXIST 
 EV_ENVIRONMENT EV_GIT_PATH EV_PROJECT_NAME).each do |var|
   unless ENV.include? var
     help

@@ -6,8 +6,6 @@ namespace :cfn do
     ######################################################################
     # Environment variables / task parameters
 
-    application_name = ENV['EV_APPLICATION_NAME'] || fail('error: EV_APPLICATION_NAME not defined')
-
     project_name = ENV['EV_PROJECT_NAME'] || fail('error: EV_PROJECT_NAME not defined')
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
@@ -17,7 +15,7 @@ namespace :cfn do
     ######################################################################
     # Variables definitions and validations
 
-    cfn_stack_name = "#{environment}-#{project_name}-#{application_name}"
+    cfn_stack_name = "#{environment}-#{project_name}"
 
     rubycfndsl_path = File.expand_path File.join(git_path, 'rubycfndsl')
 
