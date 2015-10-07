@@ -3,3 +3,7 @@ envvars
 vendor
 tmp
 *.tar.gz
+bin/
+.bundle/
+.gems/
+.idea/
