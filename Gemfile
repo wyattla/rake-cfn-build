@@ -1,3 +1,4 @@
+#ruby-gemset=rake-cfn-build
 source 'https://rubygems.org'
 
 ruby '2.1.2'
