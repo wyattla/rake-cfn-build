@@ -1,7 +1,7 @@
 #ruby-gemset=rake-cfn-build
 source 'https://rubygems.org'
 
-ruby '2.1.2'
+ruby '2.2.3'
 
 gem 'cloudformation-ruby-dsl'
 gem 'aws-sdk'
