@@ -35,12 +35,14 @@ namespace :cfn do
     # Upload all the cloud formation templates to the s3 bucket
 
     begin
+
       rubycfndsl_files.each do |file|
+
         # Variables:
         file_name = file.split('/').last
         template_cfn_name = file_name.split('.').first + '.template'
-        template_key = File.join(project_name, environment,
-                                 'cloudformation', template_cfn_name)
+        template_key = File.join(project_name, environment, 'cloudformation',
+                                 template_cfn_name)
 
         # Generate json template:
         cmd = "bundle exec #{file} expand > tmp/#{template_cfn_name}"
@@ -53,6 +55,7 @@ namespace :cfn do
         # Upload json template to s3
         obj = s3.bucket(bucket_name).object(template_key)
         obj.upload_file(File.join('tmp', template_cfn_name))
+
       end
 
       s3_cfn_location = File.join(bucket_name, project_name, environment, 'cloudformation')
@@ -68,11 +71,18 @@ namespace :cfn do
     # Create application roles and upload ansible playbooks to s3 bucket
 
     begin
+
       ansible_playbooks.each do |playbook|
+
+        # Some variable definitions
         role = File.basename(playbook).split('.').first
         tarfile = "ansible-playbook-#{role}.tar.gz"
         files = ['ansible.cfg', 'playbooks/shared_vars', 'playbooks/common.yml',
-                 "playbooks/#{role}.yml", 'roles']
+                 "playbooks/#{role}.yml", 'roles', "environments/#{environment}/inventory",
+                 "environments/#{environment}/group_vars/#{role}"]
+
+        # Remove paths that doen't exist
+        files.map! { |f| f if File.exist? File.join(ansible_path,f) }.compact
 
         # Create the taarball file
         cmd = "cd #{ansible_path} && tar zcf #{tarfile} #{files.join(' ')}"
@@ -92,6 +102,10 @@ namespace :cfn do
         version_key = File.join(project_name, environment, 'ansible', 'version')
         obj = s3.bucket(bucket_name).object(version_key)
         obj.put(body: git_hash)
+
+        # Clean up
+        FileUtils.rm File.join(ansible_path, tarfile)
+
       end
 
       s3_ansible_location = File.join(bucket_name, project_name, environment, 'ansible')
