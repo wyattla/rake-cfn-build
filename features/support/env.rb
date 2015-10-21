@@ -1,6 +1,6 @@
 require 'aruba/cucumber'
 
-# Show help message if environment variables are not defined
+# Display context specific error if environment variables are not defined
 %w(AWS_ACCESS_KEY_ID AWS_DEFAULT_REGION AWS_SECRET_ACCESS_KEY
  EV_BUCKET_NAME EV_CFN_STACK_NAME EV_CREATE_IF_NOT_EXIST 
 EV_ENVIRONMENT EV_GIT_PATH EV_PROJECT_NAME).each do |var|

@@ -38,6 +38,11 @@ is not natively available on Windows (cygwin is required).
 
 ## Required configuration
 
+### Prerequisites
+The S3 bucket that is specified in the `EV_BUCKET_NAME` environment
+variable (see below) __MUST__ be created ahead of time. It will __NOT__
+be created when the tests are run. 
+
 ### Project specific variables
 
 The following environment variables __MUST__ be defined for things to

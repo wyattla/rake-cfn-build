@@ -62,7 +62,7 @@ namespace :cfn do
       puts "INFO: Cloud formation templates uploaded to s3://#{s3_cfn_location}"
 
     rescue => e
-      puts 'ERROR: failed to upload templates to s3, error was:'
+      puts "ERROR: failed to upload templates to s3://#{s3_cfn_location}, error was:"
       puts e
       exit 1
     end
