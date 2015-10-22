@@ -30,6 +30,6 @@ Feature: Run rake tasks
     And the exit status should be 0
 
   Scenario: Delete the environment
-    When I run `rake cfn:delete_stack`
+    When I run `rake cfn:create cfn:delete_stack`
     Then the output should not contain "ERROR"
     And the exit status should be 0

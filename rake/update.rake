@@ -39,7 +39,7 @@ namespace :cfn do
     if create_if_not_exist && stack.nil?
       puts 'WARN: Environment does not exist, creating'
       Rake::Task['cfn:create'].invoke
-      exit 0
+      next
     end
 
     # Execute the main template
@@ -52,14 +52,14 @@ namespace :cfn do
 
       # Exit if command failed
       fail "Error executing #{cmd}: #{stderr.read}" if status.exitstatus != 0
-      puts "INFO: Template update triggered for #{cfn_stack_name}"
+      puts "INFO: Template update triggered for #{cfn_stack_name}\n\n"
 
     rescue => e
 
       # Case where the environment is up to date
       if e.message.match(/No updates are to be performed/)
         puts 'WARN: No updates are to be performed, stack is up to date'
-        exit 0
+        next
       end
 
       puts 'ERROR: failed to update template, error was:'
@@ -70,24 +70,19 @@ namespace :cfn do
     # Validate the status and exit accordingly
     begin
 
-      loop do
+      # Invoke cfn:get_cfn_events to monitor the logs
+      Rake::Task["cfn:get_cfn_events"].invoke
 
-        # Sanity sleep to not overflow the AWS API
-        sleep AWS_SLEEP_TIME
+      # Get the cfn stack status
+      cmd = "bundle exec #{File.join(rubycfndsl_path, 'main.rb')} describe #{cfn_stack_name}"
+      pid, _stdin, stdout, stderr = Open4.popen4 cmd
+      _ignored, status = Process.waitpid2 pid
 
-        # Get the cfn stack status
-        cmd = "bundle exec #{File.join(rubycfndsl_path, 'main.rb')} describe #{cfn_stack_name}"
-        pid, _stdin, stdout, stderr = Open4.popen4 cmd
-        _ignored, status = Process.waitpid2 pid
-
-        # Check the status and fail if not CREATE_COMPLETE
-        stack_status = JSON.parse(stdout.read)[cfn_stack_name]['stack_status']
-        fail stack_status if %w(UPDATE_FAILED UPDATE_ROLLBACK_COMPLETE).include? stack_status
-
-        break if stack_status == 'UPDATE_COMPLETE'
-      end
-
+      # Check the status and fail if not CREATE_COMPLETE
+      stack_status = JSON.parse(stdout.read)[cfn_stack_name]['stack_status']
+      fail stack_status if %w(UPDATE_FAILED UPDATE_ROLLBACK_COMPLETE).include? stack_status
       puts 'INFO: Template update successfull'
+
     rescue => e
       puts 'ERROR: failed to update template, error was:'
       puts e

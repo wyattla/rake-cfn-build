@@ -79,7 +79,15 @@ template do
   ####################################################################################################
   ####################################################################################################
 
-  resource 'TestElasticIp',
-    :Type => 'AWS::EC2::EIP'
+
+    
+  resource 'SecurityGroup',
+    :Type => 'AWS::EC2::SecurityGroup',
+    :Properties => {
+      :GroupDescription => "Test sg",
+      :SecurityGroupIngress => [
+        { 'IpProtocol' => 'tcp', 'FromPort' => '22', 'ToPort' => '22', 'CidrIp' => '10.0.0.0/8' },
+      ],
+    }                                                                                                                  
 
 end.exec!
