@@ -32,7 +32,10 @@ namespace :cfn do
 
       # Exit if command failed
       fail "ERROR: failed to executing #{cmd}: \n\n #{stderr.read}" if status.exitstatus != 0
-      puts "INFO: Template delete triggered for #{cfn_stack_name}"
+      puts "INFO: Template delete triggered for #{cfn_stack_name}\n\n"
+
+      # Invoke cfn:get_cfn_events to monitor the logs
+      Rake::Task["cfn:get_cfn_events"].invoke
 
     rescue => e
       puts 'ERROR: failed to delete template, error was:'

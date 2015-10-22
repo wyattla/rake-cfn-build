@@ -25,6 +25,7 @@ GEM
       highline
       json
     coderay (1.1.0)
+    colorize (0.7.7)
     contracts (0.11.0)
     cucumber (2.1.0)
       builder (>= 2.1.2)
@@ -67,7 +68,11 @@ DEPENDENCIES
   aruba
   aws-sdk
   cloudformation-ruby-dsl
+  colorize
   cucumber
   open4
   pry
   rake
+
+BUNDLED WITH
+   1.10.6

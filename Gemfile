@@ -7,6 +7,7 @@ gem 'cloudformation-ruby-dsl'
 gem 'aws-sdk'
 gem 'rake'
 gem 'open4'
+gem 'colorize'
 
 group :development do
   gem 'pry'

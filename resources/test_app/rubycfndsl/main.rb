@@ -79,17 +79,7 @@ template do
   ####################################################################################################
   ####################################################################################################
 
-  resource 'VPC',
-    :Type => 'AWS::EC2::VPC',
-    :Properties => {
-      :CidrBlock => find_in_map('SubnetConfig', 'VPC', 'CIDR'),
-      :EnableDnsSupport => 'true',
-      :EnableDnsHostnames => 'true',
-      :Tags => [ 
-        { :Key => 'Name', :Value => join('-',ref('EnvironmentName'),'vpc',ref('ProjectName')) }, 
-        { :Key => 'Environment', :Value => ref('EnvironmentName') }, 
-        { :Key => 'Project', :Value => ref('ProjectName') }, 
-      ],
-    }
+  resource 'TestElasticIp',
+    :Type => 'AWS::EC2::EIP'
 
 end.exec!

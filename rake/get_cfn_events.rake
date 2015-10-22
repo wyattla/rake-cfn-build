@@ -1,7 +1,7 @@
 namespace :cfn do
 
-  desc 'Debug with ruby-dsl'
-  task :debug => :init do
+  desc 'Get Cloudformation events'
+  task :get_cfn_events => :init do |t|
 
     ######################################################################
     # Environment variables / task parameters
@@ -20,9 +20,15 @@ namespace :cfn do
     # Get a list of the stacks that match the environment name
     begin
       loop do
-        cfn.describe_stacks.stacks.select { |s| s.stack_name.match(/#{cfn_stack_name}.*/) }.each do |stack|
-          sleep 1
-          cfn.describe_stack_events({"stack_name" => stack.stack_name}).stack_events.each do |event|
+
+        # Exit the loop if there are no more stacks to querey (delete) or the stack is completed (create)
+        cfn_stacks = cfn.describe_stacks.stacks.select { |s| s.stack_name.match(/#{cfn_stack_name}.*/) }
+        break if cfn_stacks.empty?
+        break if cfn.describe_stacks({stack_name: cfn_stack_name}).stacks.first.stack_status == 'CREATE_COMPLETE'
+
+        cfn_stacks.each do |stack|
+          sleep 0.1
+          cfn.describe_stack_events({"stack_name" => stack.stack_name}).stack_events.reverse.each do |event|
             if stack_events.select{ |e| e.event_id == event.event_id }.empty?
               stack_events << event 
               if event.resource_status == 'CREATE_FAILED'
@@ -35,13 +41,13 @@ namespace :cfn do
           end
         end
       end
-    rescue
+    rescue => e
+      puts e unless e.message.match(/Rate exceeded/)
       retry
     end
-      
-      
 
-
+    puts
+    t.reenable
 
   end
 

@@ -30,7 +30,7 @@ namespace :cfn do
 
       # Exit if command failed
       fail "Error executing #{cmd}: #{stderr.read}" if status.exitstatus != 0
-      puts "INFO: Template create triggered for #{cfn_stack_name}"
+      puts "INFO: Template create triggered for #{cfn_stack_name}\n\n"
     rescue => e
       puts 'ERROR: failed to create template, error was:'
       puts e
@@ -41,25 +41,21 @@ namespace :cfn do
     # Loop until the template is created
 
     begin
-      loop do
-        # Sanity sleep to not overflow the AWS API
-        sleep AWS_SLEEP_TIME
 
-        # Get the cfn stack status
-        cmd = "bundle exec #{File.join(rubycfndsl_path, 'main.rb')} describe #{cfn_stack_name}"
-        pid, _stdin, stdout, _stderr = Open4.popen4 cmd
-        _ignored, _status = Process.waitpid2 pid
+      # Invoke cfn:get_cfn_events to monitor the logs
+      Rake::Task["cfn:get_cfn_events"].invoke
 
-        # Check the status and fail if not CREATE_COMPLETE
-        stack_status = JSON.parse(stdout.read)[cfn_stack_name]['stack_status']
-        fail if %w(CREATE_FAILED ROLLBACK_COMPLETE).include? stack_status
-        break if stack_status == 'CREATE_COMPLETE'
-      end
+      # Get the cfn stack status
+      cmd = "bundle exec #{File.join(rubycfndsl_path, 'main.rb')} describe #{cfn_stack_name}"
+      pid, _stdin, stdout, _stderr = Open4.popen4 cmd
+      _ignored, _status = Process.waitpid2 pid
 
+      # Check the status and fail if not CREATE_COMPLETE
+      stack_status = JSON.parse(stdout.read)[cfn_stack_name]['stack_status']
+      fail if %w(CREATE_FAILED ROLLBACK_COMPLETE).include? stack_status
       puts 'INFO: Template create successfull'
     rescue => e
-      puts 'ERROR: failed to create template, error was:'
-      puts e
+      puts 'ERROR: failed to create template'
       exit 1
     end
 

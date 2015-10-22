@@ -3,6 +3,7 @@ require 'pp'
 require 'aws-sdk'
 require 'pry'
 require 'open4'
+require 'colorize'
 
 # Disable stdout buffer
 STDOUT.sync = true
