@@ -79,10 +79,11 @@ namespace :cfn do
         tarfile = "ansible-playbook-#{role}.tar.gz"
         files = ['ansible.cfg', 'playbooks/shared_vars', 'playbooks/common.yml',
                  "playbooks/#{role}.yml", 'roles', "environments/#{environment}/inventory",
-                 "environments/#{environment}/group_vars/#{role}"]
+                 "environments/#{environment}/group_vars/#{role}",
+                 "environments/#{environment}/host_vars"]
 
         # Remove paths that doen't exist
-        files.map! { |f| f if File.exist? File.join(ansible_path,f) }.compact
+        files.map! { |f| f if File.exist? File.join(ansible_path, f) }.compact
 
         # Create the taarball file
         cmd = "cd #{ansible_path} && tar zcf #{tarfile} #{files.join(' ')}"
@@ -98,7 +99,7 @@ namespace :cfn do
         obj.upload_file(File.join(ansible_path, tarfile))
 
         # Upload the version file to s3
-        git_hash = `cd #{ansible_path} && git rev-parse HEAD`
+        git_hash = Random.new_seed.to_s
         version_key = File.join(project_name, environment, 'ansible', 'version')
         obj = s3.bucket(bucket_name).object(version_key)
         obj.put(body: git_hash)
