@@ -19,10 +19,11 @@ namespace :cfn do
 
     # Get a list of the stacks that match the environment name
     begin
-      loop do
 
-        # Get the current Time stamp to get the latest events only:
-        timestamp = Time.new
+      # Get the current Time stamp to get the latest events only:
+      timestamp = Time.new
+
+      loop do
 
         # Exit the loop if there are no more stacks to querey (delete)
         cfn_stacks = cfn.describe_stacks.stacks.select do |stack|

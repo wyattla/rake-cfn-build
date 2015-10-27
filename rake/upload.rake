@@ -1,4 +1,5 @@
 namespace :cfn do
+
   desc 'Upload templates to s3'
   task upload: :init do
 
@@ -12,6 +13,8 @@ namespace :cfn do
     environment = ENV['EV_ENVIRONMENT'] || fail('ERROR: no EV_ENVIRONMENT not defined')
 
     git_path = ENV['EV_GIT_PATH'] || fail('ERROR: no EV_GIT_PATH not defined')
+
+    force_ansible_execution = ENV['EV_FORCE_ANSIBLE_EXEC']
 
     ######################################################################
     # Variables definitions and validations
@@ -99,7 +102,9 @@ namespace :cfn do
         obj.upload_file(File.join(ansible_path, tarfile))
 
         # Upload the version file to s3
-        git_hash = Random.new_seed.to_s
+
+        git_hash = force_ansible_execution.nil? ? `cd #{ansible_path} && git rev-parse HEAD` :
+                   Random.new_seed.to_s
         version_key = File.join(project_name, environment, 'ansible', 'version')
         obj = s3.bucket(bucket_name).object(version_key)
         obj.put(body: git_hash)
