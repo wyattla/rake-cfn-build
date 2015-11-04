@@ -9,4 +9,4 @@ require 'colorize'
 STDOUT.sync = true
 
 # Include substasks from different namespaces
-Dir.glob('*/*rake').map { |rake| import rake }
+Dir.glob('rake/*.rake').map { |rake| import rake }
