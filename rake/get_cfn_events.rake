@@ -33,7 +33,7 @@ namespace :cfn do
 
         # Exit if the main template has been completed
         cfn_exit_condition = %w(UPDATE_FAILED UPDATE_ROLLBACK_COMPLETE UPDATE_COMPLETE
-                                CREATE_COMPLETE CREATE_FAILED ROLLBACK_COMPLETE)
+                                CREATE_COMPLETE CREATE_FAILED ROLLBACK_COMPLETE DELETE_FAILED)
         cfn_stack_status = cfn.describe_stacks(stack_name: cfn_stack_name)
                            .stacks.first.stack_status
         break if cfn_exit_condition.include? cfn_stack_status
@@ -50,7 +50,7 @@ namespace :cfn do
             # Add the event on the stack_events array if is not there yet, and print it
             if stack_events.select { |e| e.event_id == event.event_id }.empty?
               stack_events << event
-              if %w(CREATE_FAILED UPDATE_FAILED).include? event.resource_status
+              if %w(CREATE_FAILED UPDATE_FAILED DELETE_FAILED).include? event.resource_status
                 printf("Resource: %-30.30s  Status: %-20.20s  LogicalId: %s / %s\n".red,
                        event.resource_type, event.resource_status, event.stack_name,
                        event.logical_resource_id)
