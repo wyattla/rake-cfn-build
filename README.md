@@ -43,18 +43,18 @@ The S3 bucket that is specified in the `EV_BUCKET_NAME` environment
 variable (see below) __MUST__ be created ahead of time. It will __NOT__
 be created when the tests are run. 
 
-### Project specific variables
+### Application specific variables
 
 The following environment variables __MUST__ be defined for things to
 work. The best way to test if things are defined is to run `cucumber`
 in the current directory. There will be output to inform you if
 required environment variables aren't present.
 
-Test project specific variables
+Test application specific variables
 
 ```
 export EV_BUCKET_NAME=< name of your S3 bucket >
-export EV_PROJECT_NAME=testproj
+export EV_APPLICATION=testproj
 export EV_ENVIRONMENT=test
 export EV_GIT_PATH=resources/test_app
 export EV_CREATE_IF_NOT_EXIST=true

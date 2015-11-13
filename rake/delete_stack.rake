@@ -6,14 +6,14 @@ namespace :cfn do
     ######################################################################
     # Environment variables / task parameters
 
-    project_name = ENV['EV_PROJECT_NAME'] || fail('error: EV_PROJECT_NAME not defined')
+    application = ENV['EV_APPLICATION'] || fail('error: EV_APPLICATION not defined')
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
 
     ######################################################################
     # Variables definitions and validations
 
-    cfn_stack_name = "#{environment}-#{project_name}"
+    cfn_stack_name = "#{environment}-#{application}"
 
     # Get the stack, and delete it
     begin

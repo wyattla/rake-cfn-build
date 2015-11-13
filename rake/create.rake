@@ -6,7 +6,7 @@ namespace :cfn do
     ######################################################################
     # Environment variables / task parameters
 
-    project_name = ENV['EV_PROJECT_NAME'] || fail('error: EV_PROJECT_NAME not defined')
+    application = ENV['EV_APPLICATION'] || fail('error: EV_APPLICATION not defined')
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
 
@@ -15,7 +15,7 @@ namespace :cfn do
     ######################################################################
     # Variables definitions and validations
 
-    cfn_stack_name = "#{environment}-#{project_name}"
+    cfn_stack_name = "#{application}-#{environment}"
 
     rubycfndsl_path = File.expand_path File.join(git_path, 'rubycfndsl')
 
@@ -53,7 +53,7 @@ namespace :cfn do
       # Check the status and fail if not CREATE_COMPLETE
       stack_status = JSON.parse(stdout.read)[cfn_stack_name]['stack_status']
       fail if %w(CREATE_FAILED ROLLBACK_COMPLETE).include? stack_status
-      puts 'INFO: Template create successfull'
+      puts 'INFO: Template create successful'
     rescue => e
       puts 'ERROR: failed to create template'
       exit 1

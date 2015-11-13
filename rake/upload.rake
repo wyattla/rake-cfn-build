@@ -1,14 +1,16 @@
 namespace :cfn do
 
+  require 'pry'
+
   desc 'Upload templates to s3'
-  task upload: :init do
+  task :upload => :init do
 
     ######################################################################
     # Environment variables / task parameters
 
     bucket_name = ENV['EV_BUCKET_NAME'] || fail('ERROR: EV_BUCKET_NAME not defined')
 
-    project_name = ENV['EV_PROJECT_NAME'] || fail('ERROR: EV_PROJECT_NAME not defined')
+    application = ENV['EV_APPLICATION'] || fail('ERROR: EV_APPLICATION not defined')
 
     environment = ENV['EV_ENVIRONMENT'] || fail('ERROR: no EV_ENVIRONMENT not defined')
 
@@ -44,7 +46,7 @@ namespace :cfn do
         # Variables:
         file_name = file.split('/').last
         template_cfn_name = file_name.split('.').first + '.template'
-        template_key = File.join(project_name, environment, 'cloudformation',
+        template_key = File.join(application, environment, 'cloudformation',
                                  template_cfn_name)
 
         # Generate json template:
@@ -61,7 +63,8 @@ namespace :cfn do
 
       end
 
-      s3_cfn_location = File.join(bucket_name, project_name, environment, 'cloudformation')
+
+      s3_cfn_location = File.join(bucket_name, application, environment, 'cloudformation')
       puts "INFO: Cloud formation templates uploaded to s3://#{s3_cfn_location}"
 
     rescue => e
@@ -97,7 +100,7 @@ namespace :cfn do
         end
 
         # Upload tarfile to s3
-        tarfile_key = File.join(project_name, environment, 'ansible', tarfile)
+        tarfile_key = File.join(application, environment, 'ansible', tarfile)
         obj = s3.bucket(bucket_name).object(tarfile_key)
         obj.upload_file(File.join(ansible_path, tarfile))
 
@@ -105,7 +108,7 @@ namespace :cfn do
 
         git_hash = force_ansible_execution.nil? ? `cd #{ansible_path} && git rev-parse HEAD` :
                    Random.new_seed.to_s
-        version_key = File.join(project_name, environment, 'ansible', 'version')
+        version_key = File.join(application, environment, 'ansible', 'version')
         obj = s3.bucket(bucket_name).object(version_key)
         obj.put(body: git_hash)
 
@@ -114,7 +117,7 @@ namespace :cfn do
 
       end
 
-      s3_ansible_location = File.join(bucket_name, project_name, environment, 'ansible')
+      s3_ansible_location = File.join(bucket_name, application, environment, 'ansible')
       puts "INFO: Ansible playbooks uploaded to s3://#{s3_ansible_location}"
 
     rescue => e

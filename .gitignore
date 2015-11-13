@@ -8,3 +8,4 @@ bin/
 .gems/
 .idea/
 envvars_test
+*.environment
