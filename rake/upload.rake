@@ -22,14 +22,16 @@ namespace :cfn do
     # Variables definitions and validations
 
     rubycfndsl_path = File.join(git_path, 'rubycfndsl')
-    rubycfndsl_files = Dir.glob(File.join(rubycfndsl_path, '*rb')).map do |x|
+    global_rubycfndsl_path = File.join(git_path, 'global_framework', 'rubycfndsl')
+    rubycfndsl_files = Dir.glob([File.join(rubycfndsl_path, '*rb'),File.join(global_rubycfndsl_path, '*rb')]).map do |x|
       File.expand_path x
     end
 
     fail "ERROR: No templates found on #{rubycfndsl_path}" if rubycfndsl_files.empty?
 
     ansible_path = File.join(git_path, 'ansible')
-    ansible_playbooks_raw = Dir.glob(File.join(ansible_path, 'playbooks', '*yml'))
+    global_ansible_path = File.join(git_path, 'global_framework', 'ansible')
+    ansible_playbooks_raw = Dir.glob([File.join(ansible_path, 'playbooks', '*yml'),File.join(global_ansible_path, 'playbooks', '*yml')])
     ansible_playbooks = ansible_playbooks_raw.map do |x|
       File.expand_path x unless x.match(/common/)
     end.compact
