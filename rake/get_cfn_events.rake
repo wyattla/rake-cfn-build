@@ -14,7 +14,7 @@ namespace :cfn do
     # Variables definitions and validations
 
     stack_events = []
-    cfn_stack_name = "#{environment}-#{project_name}"
+    cfn_stack_name = "#{project_name}-#{environment}"
     cfn = Aws::CloudFormation::Client.new
 
     # Get a list of the stacks that match the environment name

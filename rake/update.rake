@@ -17,7 +17,7 @@ namespace :cfn do
     ######################################################################
     # Variables definitions and validations
 
-    cfn_stack_name = "#{environment}-#{project_name}"
+    cfn_stack_name = "#{project_name}-#{environment}"
 
     rubycfndsl_path = File.join(git_path, 'rubycfndsl')
 
