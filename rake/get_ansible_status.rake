@@ -52,12 +52,12 @@ namespace :cfn do
     end
 
     unless instances_build_count
-      puts "ERROR: One or more instances didn't run the latest ansible build"
+      puts "ERROR: One or more instances didn't run the latest ansible build\n\n"
       error_status = 1
     end
 
     unless failed_status
-      puts "ERROR: One or more instances failed to apply ansible"
+      puts "ERROR: One or more instances failed to apply ansible\n\n"
       error_status = 1
     end
 
