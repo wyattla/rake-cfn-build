@@ -9,7 +9,7 @@ require 'cloudformation-ruby-dsl/table'
 
 # Set environment
 $environment = ENV['EV_ENVIRONMENT'] || raise('error: no EV_ENVIRONMENT provided')
-$projectname = ENV['EV_PROJECT_NAME'] || raise('error: no EV_PROJECT_NAME provided')
+$application = ENV['EV_APPLICATION'] || raise('error: no EV_APPLICATION provided')
 $bucketname = ENV['EV_BUCKET_NAME'] || raise('error: no EV_BUCKET_NAME provided')
 
 template do
@@ -20,7 +20,7 @@ template do
 
   # Description:
   
-  value :Description => "MAIN VPC Configuration for #{$projectname.upcase}"
+  value :Description => "MAIN VPC Configuration for #{$application.upcase}"
 
   ####################################################################################################
   ####################################################################################################
@@ -41,9 +41,9 @@ template do
     :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
     :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
 
-  parameter 'ProjectName',
-    :Default => $projectname,
-    :Description => 'The Project Name',
+  parameter 'ApplicationName',
+    :Default => $application,
+    :Description => 'The Application Name',
     :Type => 'String',
     :MinLength => '1',
     :MaxLength => '64',
@@ -52,7 +52,7 @@ template do
 
   parameter 'CfnBucketName',
     :Default => $bucketname,
-    :Description => 'The Project Name',
+    :Description => 'The Application Name',
     :Type => 'String',
     :MinLength => '1',
     :MaxLength => '64',

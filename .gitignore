@@ -7,4 +7,5 @@ bin/
 .bundle/
 .gems/
 .idea/
-envvars*
+envvars_test
+*.environment

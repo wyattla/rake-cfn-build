@@ -1,0 +1,11 @@
+export EV_BUCKET_NAME=elsevier-acme-infrastructure
+export EV_APPLICATION=acme
+export EV_ENVIRONMENT=test
+export EV_GIT_PATH=../acme
+
+export EV_CREATE_IF_NOT_EXIST=true
+export EV_FORCE_ANSIBLE_EXEC=true
+
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+export AWS_DEFAULT_REGION=eu-west-1
