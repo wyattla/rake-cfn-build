@@ -10,10 +10,10 @@ namespace :cfn do
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
 
+    cfn_stack_name = ENV['EV_CFN_STACK_NAME'] || "#{project_name}-#{environment}" 
+
     ######################################################################
     # Variables definitions and validations
-
-    cfn_stack_name = "#{project_name}-#{environment}"
 
     # Get the stack, and delete it
     begin

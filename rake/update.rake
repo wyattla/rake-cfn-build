@@ -14,10 +14,10 @@ namespace :cfn do
 
     git_path = ENV['EV_GIT_PATH'] || fail('ERROR: no EV_GIT_PATH not defined')
 
+    cfn_stack_name = ENV['EV_CFN_STACK_NAME'] || "#{project_name}-#{environment}" 
+
     ######################################################################
     # Variables definitions and validations
-
-    cfn_stack_name = "#{project_name}-#{environment}"
 
     rubycfndsl_path = File.join(git_path, 'rubycfndsl')
 
