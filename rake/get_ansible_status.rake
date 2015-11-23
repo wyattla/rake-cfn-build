@@ -65,9 +65,9 @@ namespace :cfn do
     report = []
     instances.each do |i|
       instance_id = i.instance_id
-      instamce_name = i.tags.map { |tag| tag.value if tag.key == "Name" }.compact.first
+      instance_name = i.tags.map { |tag| tag.value if tag.key == "Name" }.compact.first
       ansible_result = i.tags.map { |tag| tag.value if tag.key == "AnsibleRun" }.compact.first
-      report << "#{instance_id} (#{instamce_name}) - #{ansible_result}"
+      report << "#{instance_id} (#{instance_name}) - #{ansible_result}"
     end
 
     puts "\n\nAnsible run report:"
