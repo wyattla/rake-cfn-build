@@ -26,24 +26,23 @@ namespace :cfn do
       { name: "tag:ProjectName", values: [project_name] } 
     ]
 
+    instances_pending_to_build = nil
     ansible_run_tags = nil
-    instances_build_count = nil
-    failed_status = nil
     instances = nil
     error_status = 0
 
     loop do 
 
-      # Get all the tags:
+      # Calculate how many instances didn't run ansible yet
       reservations = ec2.describe_instances(filters: filter).reservations
       instances = reservations.map(&:instances).flatten
       tags = instances.map(&:tags).flatten
       ansible_run_tags = tags.map { |tag| tag.value if tag.key == "AnsibleRun"}.compact
-      instances_build_count = ansible_run_tags.map { |tag| tag.scan(/build=#{build_number}/) }.flatten.sort.uniq.size == 1
-      failed_status = ansible_run_tags.map { |tag| tag.scan(/failed=0/) }.flatten.sort.uniq.size == 1
+      instances_build_status = ansible_run_tags.map { |tag| tag.scan(/build=\d+/) }.flatten
+      instances_pending_to_build = instances_build_status.select { |x| x != "build=#{build_number}" }
 
       # Break if we reached the time out or if all the instances are on the latest build number
-      break if timeout == 0 || instances_build_count
+      break if timeout == 0 || instances_pending_to_build.empty?
 
       # Decrease timeout
       timeout -= 1
@@ -51,13 +50,15 @@ namespace :cfn do
 
     end
 
-    unless instances_build_count
-      puts "ERROR: One or more instances didn't run the latest ansible build\n\n"
+    failed_status = ansible_run_tags.map { |tag| tag.scan(/failed=\d+/) }.sort.uniq.size == 1
+
+    unless instances_pending_to_build.empty?
+      puts "ERROR: One or more instances didn't run the latest ansible build"
       error_status = 1
     end
 
     unless failed_status
-      puts "ERROR: One or more instances failed to apply ansible\n\n"
+      puts "ERROR: One or more instances failed to apply ansible"
       error_status = 1
     end
 
@@ -69,6 +70,8 @@ namespace :cfn do
       report << "#{instance_id} (#{instamce_name}) - #{ansible_result}"
     end
 
+    puts "\n\nAnsible run report:"
+    puts "===================\n"
     puts report
 
     exit error_status
