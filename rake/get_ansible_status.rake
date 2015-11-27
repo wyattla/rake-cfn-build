@@ -23,7 +23,8 @@ namespace :cfn do
     # Filter the instances for this environment and project name
     filter = [ 
       { name: "tag:Environment", values: [environment] },
-      { name: "tag:ProjectName", values: [project_name] } 
+      { name: "tag:ProjectName", values: [project_name] },
+      { name: "instance-state-name", values: ["running"] } 
     ]
 
     instances_pending_to_build = nil
