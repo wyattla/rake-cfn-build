@@ -12,6 +12,6 @@ end
 
 # Setup cucumber timeouts
 Aruba.configure do |config|
-  config.exit_timeout    = 60
+  config.exit_timeout    = 600
   config.io_wait_timeout = 2
 end

@@ -58,6 +58,7 @@ export EV_PROJECT_NAME=testproj
 export EV_ENVIRONMENT=test
 export EV_GIT_PATH=resources/test_app
 export EV_CREATE_IF_NOT_EXIST=true
+export EV_BUILD_NUMBER=93
 ```
 
 of the above `EV_GIT_PATH` is a relative path to the git repository
