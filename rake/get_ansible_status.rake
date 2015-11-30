@@ -52,13 +52,14 @@ namespace :cfn do
     end
 
     failed_status = ansible_run_tags.map { |tag| tag.scan(/failed=\d+/) }.sort.uniq.size == 1
+    unreachable_status = ansible_run_tags.map { |tag| tag.scan(/unreachable=\d+/) }.sort.uniq.size == 1
 
     unless instances_pending_to_build.empty?
       puts "ERROR: One or more instances didn't run the latest ansible build"
       error_status = 1
     end
 
-    unless failed_status
+    unless failed_status || unreachable_status
       puts "ERROR: One or more instances failed to apply ansible"
       error_status = 1
     end
