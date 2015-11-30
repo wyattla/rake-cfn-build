@@ -11,5 +11,12 @@ Aws.use_bundled_cert!
 # Disable stdout buffer
 STDOUT.sync = true
 
-# Include substasks from different namespaces
-Dir.glob('rake/*.rake').map { |rake| import rake }
+# Include sub-tasks from different namespaces
+glob_paths = ["./rake"] # default
+if ENV.has_key?('EV_GIT_PATH') && File.directory?(ENV['EV_GIT_PATH'])
+  glob_paths << "#{ENV['EV_GIT_PATH']}/rake"
+end
+
+glob_paths.each do |path|
+  Dir.glob("#{path}/*.rake").map { |rake| import rake }
+end
