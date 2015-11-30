@@ -59,6 +59,10 @@ template do
     :AllowedPattern => '[a-zA-Z0-9-\.]*',
     :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
 
+  parameter 'AnsibleRole',
+    :Default => 'test',
+    :Type => 'String'
+
   ####################################################################################################
   ####################################################################################################
   #
@@ -79,15 +83,19 @@ template do
   ####################################################################################################
   ####################################################################################################
 
-
-    
-  resource 'SecurityGroup',
-    :Type => 'AWS::EC2::SecurityGroup',
+  resource :EC2Instance,
+    :Type => "AWS::EC2::Instance",
     :Properties => {
-      :GroupDescription => "Test sg",
-      :SecurityGroupIngress => [
-        { 'IpProtocol' => 'tcp', 'FromPort' => '22', 'ToPort' => '22', 'CidrIp' => '10.0.0.0/8' },
+      :InstanceType => 'm3.medium',
+      :ImageId => 'ami-4ac6653d',
+      :SourceDestCheck => 'false',
+      :Tags => [ 
+        { :Key => 'Name', :Value => join('-',ref('ApplicationName'),ref('EnvironmentName'),'ec2',ref('AnsibleRole')) }, 
+        { :Key => 'Environment', :Value => ref('EnvironmentName') },
+        { :Key => 'AnsibleRole', :Value => ref('AnsibleRole')},                                                     
+        { :Key => 'ApplicationName', :Value => ref('ApplicationName') },                                                    
+        { :Key => 'AnsibleRun', :Value => 'build=93 ok=23 changed=5 unreachable=1 failed=0' },                                                    
       ],
-    }                                                                                                                  
+    }
 
 end.exec!

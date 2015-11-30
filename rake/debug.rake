@@ -10,11 +10,12 @@ namespace :cfn do
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
 
+    cfn_stack_name = ENV['EV_CFN_STACK_NAME'] || "#{application}-#{environment}" 
+
     ######################################################################
     # Variables definitions and validations
 
     stack_events = []
-    cfn_stack_name = "#{application}-#{environment}"
     cfn = Aws::CloudFormation::Client.new
 
     # Get a list of the stacks that match the environment name

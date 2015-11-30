@@ -10,17 +10,19 @@ namespace :cfn do
 
     environment = ENV['EV_ENVIRONMENT'] || fail('error: no EV_ENVIRONMENT not defined')
 
+    cfn_stack_name = ENV['EV_CFN_STACK_NAME'] || "#{application}-#{environment}" 
+
     ######################################################################
     # Variables definitions and validations
-
-    cfn_stack_name = "#{environment}-#{application}"
 
     # Get the stack, and delete it
     begin
 
+      # Delete the stack
       cfn = Aws::CloudFormation::Client.new
       cfn.delete_stack(stack_name: cfn_stack_name)
       puts "INFO: Template delete triggered for #{cfn_stack_name}\n\n"
+
       # Invoke cfn:get_cfn_events to monitor the logs
       Rake::Task["cfn:get_cfn_events"].invoke
 

@@ -9,3 +9,5 @@ bin/
 .idea/
 envvars_test
 *.environment
+credentials/
+envvars*
