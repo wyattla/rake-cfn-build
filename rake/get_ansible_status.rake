@@ -23,7 +23,7 @@ namespace :cfn do
     # Filter the instances for this environment and project name
     filter = [ 
       { name: "tag:Environment", values: [environment] },
-      { name: "tag:ApplicationName", values: [application] },
+      { name: "tag:Application", values: [application] },
       { name: "instance-state-name", values: ["running"] } 
     ]
 
