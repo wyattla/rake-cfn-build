@@ -8,6 +8,7 @@ gem 'aws-sdk'
 gem 'rake'
 gem 'open4'
 gem 'colorize'
+gem 'table_print'
 
 group :development do
   gem 'pry'

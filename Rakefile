@@ -4,6 +4,7 @@ require 'aws-sdk'
 require 'pry'
 require 'open4'
 require 'colorize'
+require 'table_print'
 
 # Use AWS-SDK's bundled cert to avoid SSL errors
 Aws.use_bundled_cert!

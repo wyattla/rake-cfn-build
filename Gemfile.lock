@@ -59,6 +59,7 @@ GEM
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
     slop (3.6.0)
+    table_print (1.5.4)
     thor (0.19.1)
 
 PLATFORMS
@@ -73,6 +74,7 @@ DEPENDENCIES
   open4
   pry
   rake
+  table_print
 
 BUNDLED WITH
    1.10.6

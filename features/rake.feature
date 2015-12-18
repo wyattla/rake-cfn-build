@@ -24,8 +24,8 @@ Feature: Run rake tasks
     Then the output should not contain "ERROR"
     And the exit status should be 0
 
-  Scenario: Get the ansible run status
-    When I run `bundle exec rake cfn:get_ansible_status`
+  Scenario: Describe the environment
+    When I run `bundle exec rake cfn:describe_environment`
     Then the output should not contain "ERROR"
     And the exit status should be 0
 
